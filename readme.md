@@ -1,3 +1,12 @@
+# Spinningup Apple silicon compatible version
+This forked version uses gymnasium v27 instead of gym.
+Please run with envs described in [gymnasium v27 docs](https://gymnasium.farama.org).
+
+**Also, highly recommend that you should close rendering window while training for faster learning process.**
+
+
+## Original README below.
+---
 **Status:** Maintenance (expect bug fixes and minor updates)
 
 Welcome to Spinning Up in Deep RL! 
