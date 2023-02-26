@@ -100,7 +100,7 @@ if __name__ == '__main__':
     import time
 
     logdir = "/tmp/experiments/%i"%int(time.time())
-    ppo(env_fn = lambda : gym.make('InvertedPendulum-v2', render_mode="human"),
+    ppo(env_fn = lambda : gym.make('InvertedPendulum-v2'),
         ac_kwargs=dict(policy=mlp_gaussian_policy, hidden_sizes=(64,)),
         steps_per_epoch=4000, epochs=20, logger_kwargs=dict(output_dir=logdir))
 

@@ -401,7 +401,7 @@ if __name__ == '__main__':
     logger_kwargs = setup_logger_kwargs(args.exp_name + '-' + args.env.lower(), args.seed)
 
     all_kwargs = dict(
-        env_fn=lambda : gym.make(args.env, render_mode="human"), 
+        env_fn=lambda : gym.make(args.env), 
         actor_critic=core.MLPActorCritic,
         ac_kwargs=dict(hidden_sizes=[128,128]), 
         max_ep_len=150,
