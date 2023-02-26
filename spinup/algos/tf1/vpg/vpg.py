@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-import gym
+import gymnasium as gym
 import time
 import spinup.algos.tf1.vpg.core as core
 from spinup.utils.logx import EpochLogger
@@ -223,14 +223,14 @@ def vpg(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), seed=0,
                      DeltaLossV=(v_l_new - v_l_old))
 
     start_time = time.time()
-    o, ep_ret, ep_len = env.reset(), 0, 0
+    o, _, ep_ret, ep_len = *env.reset(), 0, 0
 
     # Main loop: collect experience in env and update/log each epoch
     for epoch in range(epochs):
         for t in range(local_steps_per_epoch):
             a, v_t, logp_t = sess.run(get_action_ops, feed_dict={x_ph: o.reshape(1,-1)})
 
-            o2, r, d, _ = env.step(a[0])
+            o2, r, d, _ = gym.utils.step_api_compatibility.convert_to_done_step_api(env.step(a[0]))
             ep_ret += r
             ep_len += 1
 
@@ -251,7 +251,7 @@ def vpg(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), seed=0,
                 if terminal:
                     # only save EpRet / EpLen if trajectory finished
                     logger.store(EpRet=ep_ret, EpLen=ep_len)
-                o, ep_ret, ep_len = env.reset(), 0, 0
+                o, _, ep_ret, ep_len = *env.reset(), 0, 0
 
         # Save model
         if (epoch % save_freq == 0) or (epoch == epochs-1):
@@ -294,7 +294,7 @@ if __name__ == '__main__':
     from spinup.utils.run_utils import setup_logger_kwargs
     logger_kwargs = setup_logger_kwargs(args.exp_name, args.seed)
 
-    vpg(lambda : gym.make(args.env), actor_critic=core.mlp_actor_critic,
+    vpg(lambda : gym.make(args.env, render_mode="human"), actor_critic=core.mlp_actor_critic,
         ac_kwargs=dict(hidden_sizes=[args.hid]*args.l), gamma=args.gamma, 
         seed=args.seed, steps_per_epoch=args.steps, epochs=args.epochs,
         logger_kwargs=logger_kwargs)

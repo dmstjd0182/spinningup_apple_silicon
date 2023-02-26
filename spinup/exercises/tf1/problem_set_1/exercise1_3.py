@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-import gym
+import gymnasium as gym
 import time
 from spinup.algos.tf1.td3 import core
 from spinup.algos.tf1.td3.td3 import td3 as true_td3
@@ -277,16 +277,16 @@ def td3(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), seed=0,
 
     def test_agent():
         for j in range(num_test_episodes):
-            o, d, ep_ret, ep_len = test_env.reset(), False, 0, 0
+            o, _, d, ep_ret, ep_len = *test_env.reset(), False, 0, 0
             while not(d or (ep_len == max_ep_len)):
                 # Take deterministic actions at test time (noise_scale=0)
-                o, r, d, _ = test_env.step(get_action(o, 0))
+                o, r, d, _ = gym.utils.step_api_compatibility.convert_to_done_step_api(test_env.step(get_action(o, 0)))
                 ep_ret += r
                 ep_len += 1
             logger.store(TestEpRet=ep_ret, TestEpLen=ep_len)
 
     start_time = time.time()
-    o, ep_ret, ep_len = env.reset(), 0, 0
+    o, _, ep_ret, ep_len = *env.reset(), 0, 0
     total_steps = steps_per_epoch * epochs
 
     # Main loop: collect experience in env and update/log each epoch
@@ -301,7 +301,7 @@ def td3(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), seed=0,
             a = env.action_space.sample()
 
         # Step the env
-        o2, r, d, _ = env.step(a)
+        o2, r, d, _ = gym.utils.step_api_compatibility.convert_to_done_step_api(env.step(a))
         ep_ret += r
         ep_len += 1
 
@@ -320,7 +320,7 @@ def td3(env_fn, actor_critic=core.mlp_actor_critic, ac_kwargs=dict(), seed=0,
         # End of trajectory handling
         if d or (ep_len == max_ep_len):
             logger.store(EpRet=ep_ret, EpLen=ep_len)
-            o, ep_ret, ep_len = env.reset(), 0, 0
+            o, _, ep_ret, ep_len = *env.reset(), 0, 0
 
         # Update handling
         if t >= update_after and t % update_every == 0:
@@ -379,7 +379,7 @@ if __name__ == '__main__':
     logger_kwargs = setup_logger_kwargs(args.exp_name + '-' + args.env.lower(), args.seed)
 
     all_kwargs = dict(
-        env_fn=lambda : gym.make(args.env), 
+        env_fn=lambda : gym.make(args.env, render_mode="human"), 
         actor_critic=core.mlp_actor_critic,
         ac_kwargs=dict(hidden_sizes=[128,128]), 
         max_ep_len=150,

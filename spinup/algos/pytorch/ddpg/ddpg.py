@@ -2,7 +2,7 @@ from copy import deepcopy
 import numpy as np
 import torch
 from torch.optim import Adam
-import gym
+import gymnasium as gym
 import time
 import spinup.algos.pytorch.ddpg.core as core
 from spinup.utils.logx import EpochLogger
@@ -230,10 +230,11 @@ def ddpg(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
 
     def test_agent():
         for j in range(num_test_episodes):
-            o, d, ep_ret, ep_len = test_env.reset(), False, 0, 0
+            o, _ = test_env.reset()
+            d, ep_ret, ep_len = False, 0, 0
             while not(d or (ep_len == max_ep_len)):
                 # Take deterministic actions at test time (noise_scale=0)
-                o, r, d, _ = test_env.step(get_action(o, 0))
+                o, r, d, _ = gym.utils.step_api_compatibility.convert_to_done_step_api(test_env.step(get_action(o, 0)))
                 ep_ret += r
                 ep_len += 1
             logger.store(TestEpRet=ep_ret, TestEpLen=ep_len)
@@ -241,7 +242,8 @@ def ddpg(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
     # Prepare for interaction with environment
     total_steps = steps_per_epoch * epochs
     start_time = time.time()
-    o, ep_ret, ep_len = env.reset(), 0, 0
+    o, _ = env.reset()
+    ep_ret, ep_len = 0, 0
 
     # Main loop: collect experience in env and update/log each epoch
     for t in range(total_steps):
@@ -255,7 +257,7 @@ def ddpg(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
             a = env.action_space.sample()
 
         # Step the env
-        o2, r, d, _ = env.step(a)
+        o2, r, d, _ = gym.utils.step_api_compatibility.convert_to_done_step_api(env.step(a))
         ep_ret += r
         ep_len += 1
 
@@ -274,7 +276,8 @@ def ddpg(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
         # End of trajectory handling
         if d or (ep_len == max_ep_len):
             logger.store(EpRet=ep_ret, EpLen=ep_len)
-            o, ep_ret, ep_len = env.reset(), 0, 0
+            o, _ = env.reset()
+            ep_ret, ep_len = 0, 0
 
         # Update handling
         if t >= update_after and t % update_every == 0:
@@ -321,7 +324,7 @@ if __name__ == '__main__':
     from spinup.utils.run_utils import setup_logger_kwargs
     logger_kwargs = setup_logger_kwargs(args.exp_name, args.seed)
 
-    ddpg(lambda : gym.make(args.env), actor_critic=core.MLPActorCritic,
+    ddpg(lambda : gym.make(args.env, render_mode="human"), actor_critic=core.MLPActorCritic,
          ac_kwargs=dict(hidden_sizes=[args.hid]*args.l), 
          gamma=args.gamma, seed=args.seed, epochs=args.epochs,
          logger_kwargs=logger_kwargs)

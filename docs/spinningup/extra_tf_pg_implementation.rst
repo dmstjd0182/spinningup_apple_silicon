@@ -79,7 +79,7 @@ In this block, we build a "loss" function for the policy gradient algorithm. Whe
             batch_lens = []         # for measuring episode lengths
 
             # reset episode-specific variables
-            obs = env.reset()       # first obs comes from starting distribution
+            obs, _ = env.reset()       # first obs comes from starting distribution
             done = False            # signal from environment that episode is over
             ep_rews = []            # list for rewards accrued throughout ep
 
@@ -98,7 +98,7 @@ In this block, we build a "loss" function for the policy gradient algorithm. Whe
 
                 # act in the environment
                 act = sess.run(actions, {obs_ph: obs.reshape(1,-1)})[0]
-                obs, rew, done, _ = env.step(act)
+                obs, rew, done, _ = gym.utils.step_api_compatibility.convert_to_done_step_api(env.step(act))
 
                 # save action, reward
                 batch_acts.append(act)
@@ -114,7 +114,8 @@ In this block, we build a "loss" function for the policy gradient algorithm. Whe
                     batch_weights += [ep_ret] * ep_len
 
                     # reset episode-specific variables
-                    obs, done, ep_rews = env.reset(), False, []
+                    obs, _ = env.reset()
+                    done, ep_rews = False, []
 
                     # won't render again this epoch
                     finished_rendering_this_epoch = True

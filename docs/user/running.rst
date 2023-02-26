@@ -145,7 +145,7 @@ Environment Flag
 
 .. option:: --env, --env_name
 
-    *string*. The name of an environment in the OpenAI Gym. All Spinning Up algorithms are implemented as functions that accept ``env_fn`` as an argument, where ``env_fn`` must be a callable function that builds a copy of the RL environment. Since the most common use case is Gym environments, though, all of which are built through ``gym.make(env_name)``, we allow you to just specify ``env_name`` (or ``env`` for short) at the command line, which gets converted to a lambda-function that builds the correct gym environment.
+    *string*. The name of an environment in the OpenAI Gym. All Spinning Up algorithms are implemented as functions that accept ``env_fn`` as an argument, where ``env_fn`` must be a callable function that builds a copy of the RL environment. Since the most common use case is Gym environments, though, all of which are built through ``gym.make(env_name, render_mode="human")``, we allow you to just specify ``env_name`` (or ``env`` for short) at the command line, which gets converted to a lambda-function that builds the correct gym environment.
 
 
 Shortcut Flags
@@ -249,9 +249,9 @@ See the documentation page for each algorithm for a complete account of possible
 
     from spinup import ppo_tf1 as ppo
     import tensorflow as tf
-    import gym
+    import gymnasium as gym
 
-    env_fn = lambda : gym.make('LunarLander-v2')
+    env_fn = lambda : gym.make('LunarLander-v2', render_mode="human")
 
     ac_kwargs = dict(hidden_sizes=[64,64], activation=tf.nn.relu)
 
