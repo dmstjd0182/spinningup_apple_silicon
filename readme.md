@@ -3,7 +3,7 @@ This forked version uses gymnasium v27 instead of gym.
 Please install tensorflow for apple silicon manually, and run with latest envs described in [gymnasium v27 docs](https://gymnasium.farama.org).
 
 **Also, when you test your policy please explicitly type the env's name with '--env' option.    
-(e.g. 'python -m spinup.run test_policy data/installtest/installtest_s0 --env LunarLander-v2')**
+(e.g. `python -m spinup.run test_policy data/installtest/installtest_s0 --env LunarLander-v2`)**
 
 
 ## Original README below.
