@@ -369,7 +369,7 @@ def td3(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
 
             # Save model
             if (epoch % save_freq == 0) or (epoch == epochs):
-                logger.save_state({'env': env}, None)
+                logger.save_state({'env': env, 'env_name': env.spec.id}, None)
 
             # Test the performance of the deterministic version of the agent.
             test_agent()
@@ -391,7 +391,7 @@ def td3(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--env', type=str, default='HalfCheetah-v2')
+    parser.add_argument('--env', type=str, default='HalfCheetah-v4')
     parser.add_argument('--seed', '-s', type=int, default=0)
     parser.add_argument('--exp_name', type=str, default='ex13-td3')
     parser.add_argument('--use_soln', action='store_true')

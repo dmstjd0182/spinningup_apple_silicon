@@ -160,13 +160,13 @@ There are a few flags for options:
 
     .. code-block:: python
 
-        logger.save_state({'env': env}, None)
+        logger.save_state({'env': env, 'env_name': env.spec.id}, None)
 
     and tweak it to
 
     .. code-block:: python
 
-        logger.save_state({'env': env}, epoch)
+        logger.save_state({'env': env, 'env_name': env.spec.id}, epoch)
 
     Make sure to then also set ``save_freq`` to something reasonable (because if it defaults to 1, for instance, you'll flood your output directory with one ``save`` folder for each snapshot---which adds up fast).
 

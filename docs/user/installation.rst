@@ -128,11 +128,11 @@ Once you have installed MuJoCo, install the corresponding Gym environments with
 
     pip install gym[mujoco,robotics]
 
-And then check that things are working by running PPO in the Walker2d-v2 environment with
+And then check that things are working by running PPO in the Walker2d-v4 environment with
 
 .. parsed-literal::
 
-    python -m spinup.run ppo --hid "[32,32]" --env Walker2d-v2 --exp_name mujocotest
+    python -m spinup.run ppo --hid "[32,32]" --env Walker2d-v4 --exp_name mujocotest
 
 
 .. _`mujoco-py`: https://github.com/openai/mujoco-py
